@@ -6,7 +6,7 @@ from ..epochs import epochs_create
 from ..signal import signal_zerocrossings
 
 
-def eog_features(eog_cleaned, peaks, sampling_rate=1000):
+def eog_features(eog_cleaned, peaks, sampling_rate=1000, use_max_blink_amplitude=False):
     """**Extracts Features of EOG Eye Blinks**
 
     Extracts features of EOG eye blinks e.g., velocity measures, blink-amplitude-ratio (BAR),
@@ -80,6 +80,10 @@ def eog_features(eog_cleaned, peaks, sampling_rate=1000):
         change_close = np.diff(blink_close)
         duration_close = len(change_close) / sampling_rate
         pAVR = abs(change_close.max() / duration_close) * 100
+
+        if use_max_blink_amplitude:
+            pAVR = abs(blink_close.max() / change_close.max()) / sampling_rate * 100
+
         pAVR_list.append(pAVR)
 
         # Opening blink (nAVR)
